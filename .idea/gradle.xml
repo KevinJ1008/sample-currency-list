@@ -9,6 +9,8 @@
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$" />
+            <option value="$PROJECT_DIR$/BaseCore" />
+            <option value="$PROJECT_DIR$/LocalClient" />
             <option value="$PROJECT_DIR$/app" />
           </set>
         </option>
