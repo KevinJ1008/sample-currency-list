@@ -7,6 +7,7 @@ import kotlin.reflect.KProperty
 
 abstract class KotlinEpoxyHolder : EpoxyHolder() {
     lateinit var view: View
+        private set
 
     override fun bindView(itemView: View) {
         view = itemView

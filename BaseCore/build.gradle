@@ -3,6 +3,9 @@ plugins {
     id 'kotlin-android'
     id 'kotlin-kapt'
 }
+kapt {
+    correctErrorTypes = true
+}
 
 android {
     compileSdk rootProject.ext.compileSdkVersion
@@ -68,7 +71,10 @@ dependencies {
     api "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifeCycleVersion"
     api "androidx.lifecycle:lifecycle-livedata-ktx:$lifeCycleVersion"
     api "androidx.room:room-runtime:$roomVersion"
+    api "androidx.room:room-ktx:$roomVersion"
     kapt "androidx.room:room-compiler:$roomVersion"
+    api "androidx.navigation:navigation-fragment-ktx:$navVersion"
+    api "androidx.navigation:navigation-ui-ktx:$navVersion"
 
     //----------------------------------------------------------------------------------------------
     // Koin

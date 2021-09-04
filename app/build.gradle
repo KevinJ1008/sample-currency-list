@@ -3,6 +3,9 @@ plugins {
     id 'kotlin-android'
     id 'kotlin-kapt'
 }
+kapt {
+    correctErrorTypes = true
+}
 
 android {
     compileSdk rootProject.ext.compileSdkVersion
@@ -37,6 +40,7 @@ android {
 }
 
 dependencies {
+    implementation project(':LocalClient')
     implementation project(':BaseCore')
     kapt "com.airbnb.android:epoxy-processor:$epoxyVersion"
     testImplementation 'junit:junit:4.+'
