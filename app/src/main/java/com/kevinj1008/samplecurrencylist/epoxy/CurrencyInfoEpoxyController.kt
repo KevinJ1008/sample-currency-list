@@ -7,7 +7,7 @@ import com.kevinj1008.basecore.utils.toLiveData
 import com.kevinj1008.localclient.model.CurrencyInfo
 
 class CurrencyInfoEpoxyController : EpoxyController() {
-    private val _clickEvent = MutableLiveData<Event<Void?>>()
+    private val _clickEvent = MutableLiveData<Event<ClickEvent>>()
     val clickEvent = _clickEvent.toLiveData()
 
     private var currencyList: ArrayList<CurrencyInfo> = arrayListOf()
@@ -18,8 +18,11 @@ class CurrencyInfoEpoxyController : EpoxyController() {
                 id(currencyInfo.id + index)
                 name(currencyInfo.name)
                 symbol(currencyInfo.symbol)
-                clickListener {
-                    this@CurrencyInfoEpoxyController._clickEvent.value = Event(null)
+                clickListener { name, symbol ->
+                    val event = ClickEvent.CurrencyEvent(position = index,
+                        name = name,
+                        symbol = symbol)
+                    this@CurrencyInfoEpoxyController._clickEvent.value = Event(event)
                 }
             }
         }
@@ -30,5 +33,15 @@ class CurrencyInfoEpoxyController : EpoxyController() {
             currencyList.addAll(this)
             requestModelBuild()
         }
+    }
+
+    /**
+     * This seal class is for this recyclerView's click event hook data
+     * You could extend this in your need in this recyclerView
+     */
+    sealed class ClickEvent {
+        data class CurrencyEvent(val position: Int,
+                                 val name: String,
+                                 val symbol: String) : ClickEvent()
     }
 }

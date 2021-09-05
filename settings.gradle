@@ -10,3 +10,4 @@ rootProject.name = "SampleCurrencyList"
 include ':app'
 include ':BaseCore'
 include ':LocalClient'
+include ':Widget'

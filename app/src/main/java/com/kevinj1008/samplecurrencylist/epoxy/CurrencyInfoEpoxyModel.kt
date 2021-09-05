@@ -11,13 +11,13 @@ import com.kevinj1008.samplecurrencylist.R
 abstract class CurrencyInfoEpoxyModel : EpoxyModelWithHolder<CurrencyInfoEpoxyModel.ViewHolder>() {
 
     @EpoxyAttribute
-    var name: String? = null
+    var name: String = ""
 
     @EpoxyAttribute
-    var symbol: String? = null
+    var symbol: String = ""
 
     @EpoxyAttribute(EpoxyAttribute.Option.DoNotHash)
-    var clickListener: (() -> Unit)? = null
+    var clickListener: ((name: String, symbol: String) -> Unit)? = null
 
     override fun getDefaultLayout(): Int {
         return R.layout.item_currency_info
@@ -25,13 +25,13 @@ abstract class CurrencyInfoEpoxyModel : EpoxyModelWithHolder<CurrencyInfoEpoxyMo
 
     override fun bind(holder: ViewHolder) {
         super.bind(holder)
-        name?.takeIf { it.isNotEmpty() }?.apply {
+        name.takeIf { it.isNotEmpty() }?.apply {
             holder.textAvatar.text = this.first().toString()
         }
         holder.textName.text = name
         holder.textSymbol.text = symbol
         holder.view.setOnClickListener {
-            clickListener?.invoke()
+            clickListener?.invoke(name, symbol)
         }
     }
 

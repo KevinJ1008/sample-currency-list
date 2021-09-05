@@ -9,8 +9,8 @@
 
     <TextView
         android:id="@+id/text_avatar"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
+        android:layout_width="@dimen/currency_avatar_size"
+        android:layout_height="@dimen/currency_avatar_size"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
