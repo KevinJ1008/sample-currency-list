@@ -6,6 +6,4 @@ import com.kevinj1008.localclient.model.CurrencyInfo
 
 interface CurrencyRepository {
     suspend fun observeCurrencyList(sortOrder: SortOrder): LiveData<List<CurrencyInfo>>
-//    fun observeCurrencyListAsc(): LiveData<List<CurrencyInfo>>
-//    fun observeCurrencyListDesc(): LiveData<List<CurrencyInfo>>
 }

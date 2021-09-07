@@ -16,13 +16,7 @@ class CurrencyViewModel(
     private val _sort = MutableLiveData<SortOrder>()
     val currencyList: LiveData<Event<List<CurrencyInfo>>> = _sort.switchMap {
         setLoading(isLoading = true)
-//        when (it) {
-//            SortOrder.ASCENDING -> repository.observeCurrencyListAsc().distinctUntilChanged()
-//            SortOrder.DESCENDING -> repository.observeCurrencyListDesc().distinctUntilChanged()
-//            else -> repository.observeCurrencyList().distinctUntilChanged()
-//        }.map { currencyList ->
-//            handleData(currencyList)
-//        }
+        //TODO: handle IO exception and input value wrong issue??
         liveData(context = viewModelScope.coroutineContext + Dispatchers.IO) {
             emitSource(repository.observeCurrencyList(it).distinctUntilChanged().map { currencyList ->
                 handleData(currencyList)

@@ -9,7 +9,6 @@ class CurrencyRepositoryImpl(
     private val currencyLocalDataSource: LocalDataSource<LiveData<List<CurrencyInfo>>>
 ) : CurrencyRepository {
 
-    override suspend fun observeCurrencyList(sortOrder: SortOrder): LiveData<List<CurrencyInfo>> = currencyLocalDataSource.getData(sortOrder)
-//    override fun observeCurrencyListAsc(): LiveData<List<CurrencyInfo>> = currencyLocalDataSource.observeAscData()
-//    override fun observeCurrencyListDesc(): LiveData<List<CurrencyInfo>> = currencyLocalDataSource.observeDescData()
+    override suspend fun observeCurrencyList(sortOrder: SortOrder): LiveData<List<CurrencyInfo>> =
+        currencyLocalDataSource.getData(sortOrder)
 }
