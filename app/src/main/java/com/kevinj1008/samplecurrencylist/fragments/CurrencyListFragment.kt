@@ -1,12 +1,10 @@
 package com.kevinj1008.samplecurrencylist.fragments
 
-import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.content.res.ResourcesCompat
-import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.core.view.isVisible
 import com.google.android.material.snackbar.Snackbar
 import com.kevinj1008.basecore.base.BaseFragment
 import com.kevinj1008.samplecurrencylist.databinding.FragmentListResultBinding
@@ -14,10 +12,8 @@ import com.kevinj1008.samplecurrencylist.epoxy.CurrencyInfoEpoxyController
 import com.kevinj1008.samplecurrencylist.interfaces.CustomFragmentManager
 import com.kevinj1008.samplecurrencylist.viewmodel.CurrencyViewModel
 import com.kevinj1008.widget.CustomItemDecoration
-import com.kevinj1008.widget.R
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 
-//TODO: handle sorting and restore case
 class CurrencyListFragment : BaseFragment<FragmentListResultBinding>() {
 
     private val viewModel: CurrencyViewModel by sharedViewModel()
@@ -39,8 +35,8 @@ class CurrencyListFragment : BaseFragment<FragmentListResultBinding>() {
     override fun onDestroyView() {
         binding?.recyclerview?.clear()
         manager?.onShowSortingButton(false)
-        super.onDestroyView()
         manager = null
+        super.onDestroyView()
     }
 
     fun setFragmentManager(manager: CustomFragmentManager?) {
@@ -59,8 +55,19 @@ class CurrencyListFragment : BaseFragment<FragmentListResultBinding>() {
 
     private fun registerObserver() {
         viewModel.currencyList.observe(viewLifecycleOwner, {
-            epoxyController.setCurrencyList(it)
+            it.getContentIfNotHandled()?.apply {
+                epoxyController.setCurrencyList(this)
+                viewModel.setLoading(isLoading = false)
+            }
         })
+        viewModel.isLoading.observe(viewLifecycleOwner, {
+            it.getContentIfNotHandled()?.apply {
+                binding?.layoutLoadingContainer?.isVisible = this
+                manager?.onDataLoading(this)
+            }
+        })
+        //ClickListener which hooked from item view in Recyclerview to this parent, use liveData to
+        // achieve could prevent write new wrapper class
         epoxyController.clickEvent.observe(viewLifecycleOwner, {
             when (val clickEvent = it.getContentIfNotHandled()) {
                 is CurrencyInfoEpoxyController.ClickEvent.CurrencyEvent -> {

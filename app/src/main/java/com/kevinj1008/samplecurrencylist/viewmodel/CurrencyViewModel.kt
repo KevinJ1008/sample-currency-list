@@ -1,33 +1,52 @@
 package com.kevinj1008.samplecurrencylist.viewmodel
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.distinctUntilChanged
-import androidx.lifecycle.switchMap
+import androidx.lifecycle.*
 import com.kevinj1008.basecore.base.BaseViewModel
+import com.kevinj1008.basecore.utils.Event
+import com.kevinj1008.basecore.utils.toLiveData
 import com.kevinj1008.localclient.helper.SortOrder
 import com.kevinj1008.localclient.model.CurrencyInfo
 import com.kevinj1008.samplecurrencylist.repository.CurrencyRepository
+import kotlinx.coroutines.Dispatchers
 
 class CurrencyViewModel(
     private val repository: CurrencyRepository
 ) : BaseViewModel() {
 
     private val _sort = MutableLiveData<SortOrder>()
-    val currencyList: LiveData<List<CurrencyInfo>> = _sort.switchMap {
-        when (it) {
-            SortOrder.ASCENDING -> repository.observeCurrencyList().distinctUntilChanged() //TODO: change real func
-            SortOrder.DESCENDING -> repository.observeCurrencyList().distinctUntilChanged() //TODO: change real func
-            else -> repository.observeCurrencyList().distinctUntilChanged()
+    val currencyList: LiveData<Event<List<CurrencyInfo>>> = _sort.switchMap {
+        setLoading(isLoading = true)
+//        when (it) {
+//            SortOrder.ASCENDING -> repository.observeCurrencyListAsc().distinctUntilChanged()
+//            SortOrder.DESCENDING -> repository.observeCurrencyListDesc().distinctUntilChanged()
+//            else -> repository.observeCurrencyList().distinctUntilChanged()
+//        }.map { currencyList ->
+//            handleData(currencyList)
+//        }
+        liveData(context = viewModelScope.coroutineContext + Dispatchers.IO) {
+            emitSource(repository.observeCurrencyList(it).distinctUntilChanged().map { currencyList ->
+                handleData(currencyList)
+            })
         }
     }
+    private val _isLoading = MutableLiveData<Event<Boolean>>()
+    val isLoading = _isLoading.toLiveData()
 
     fun load() {
         _sort.value = SortOrder.ORIGIN
     }
 
-    //TODO: sorting feature
     fun sortByOrder(order: SortOrder) {
         _sort.value = order
+    }
+
+    fun setLoading(isLoading: Boolean) {
+        _isLoading.value = Event(isLoading)
+    }
+
+    //Prevent onChange twice if observe again because of re-entering fragment, due to viewModel is
+    // belong to activity
+    private fun handleData(list: List<CurrencyInfo>): Event<List<CurrencyInfo>> {
+        return Event(list)
     }
 }

@@ -4,10 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentManager
-import androidx.fragment.app.FragmentOnAttachListener
 import androidx.fragment.app.commit
-import androidx.navigation.findNavController
 import com.kevinj1008.basecore.base.BaseViewBindingActivity
 import com.kevinj1008.localclient.helper.SortOrder
 import com.kevinj1008.samplecurrencylist.R
@@ -19,6 +16,7 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class DemoActivity : BaseViewBindingActivity<ActivityMainBinding>(), CustomFragmentManager {
 
+    //Let viewModel belongs to DemoActivity, and it will provide currencyList to CurrencyListFragment
     private val viewModel: CurrencyViewModel by viewModel()
     private var sortOrder: SortOrder = SortOrder.ORIGIN
 
@@ -26,7 +24,7 @@ class DemoActivity : BaseViewBindingActivity<ActivityMainBinding>(), CustomFragm
     ) -> ActivityMainBinding = ActivityMainBinding::inflate
 
     /**
-     * This interface is better than fragmentOnAttachListener, because listener won't be called if
+     * This method is better than fragmentOnAttachListener, because listener won't be called if
      * fragment restored, we want lifeCycle is paired
      */
     override fun onAttachFragment(fragment: Fragment) {
@@ -40,15 +38,11 @@ class DemoActivity : BaseViewBindingActivity<ActivityMainBinding>(), CustomFragm
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        initViews()
-    }
-
-    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
-        super.onRestoreInstanceState(savedInstanceState)
-        sortOrder = savedInstanceState.getSerializable(SORT_ORDER) as? SortOrder ?: SortOrder.ORIGIN
+        sortOrder = savedInstanceState?.getSerializable(SORT_ORDER) as? SortOrder ?: SortOrder.ORIGIN
         if (supportFragmentManager.backStackEntryCount > 0) {
             viewModel.sortByOrder(sortOrder)
         }
+        initViews()
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -66,23 +60,25 @@ class DemoActivity : BaseViewBindingActivity<ActivityMainBinding>(), CustomFragm
 
     override fun onShowSortingButton(isVisible: Boolean) {
         if (isVisible) {
-            //TODO: set correct text
             when (sortOrder) {
                 SortOrder.ORIGIN -> {
-
+                    binding?.btnSort?.text = getString(R.string.sorting_btn_asc)
                 }
                 SortOrder.ASCENDING -> {
-
+                    binding?.btnSort?.text = getString(R.string.sorting_btn_des)
                 }
                 SortOrder.DESCENDING -> {
-
+                    binding?.btnSort?.text = getString(R.string.sorting_btn_origin)
                 }
             }
         } else {
-            //TODO: reset text
             sortOrder = SortOrder.ORIGIN
         }
         binding?.btnSort?.isVisible = isVisible
+    }
+
+    override fun onDataLoading(isLoading: Boolean) {
+        binding?.btnSort?.isClickable = !isLoading
     }
 
     private fun initViews() {
@@ -96,19 +92,26 @@ class DemoActivity : BaseViewBindingActivity<ActivityMainBinding>(), CustomFragm
             }
         }
         binding?.btnSort?.setOnClickListener {
-            //TODO: change correct text
+            //We don't have to do specific behavior to prevent concurrency issue of multi click in here,
+            // because Room and LiveData will help use to make every result value synchronized
             sortOrder = when (sortOrder) {
                 SortOrder.ORIGIN -> {
+                    binding?.btnSort?.text = getString(R.string.sorting_btn_des)
                     SortOrder.ASCENDING
                 }
                 SortOrder.ASCENDING -> {
+                    binding?.btnSort?.text = getString(R.string.sorting_btn_origin)
                     SortOrder.DESCENDING
                 }
                 SortOrder.DESCENDING -> {
+                    binding?.btnSort?.text = getString(R.string.sorting_btn_asc)
                     SortOrder.ORIGIN
                 }
             }
             viewModel.sortByOrder(sortOrder)
+        }
+        binding?.logo?.setOnClickListener {
+            onBackPressed()
         }
     }
 

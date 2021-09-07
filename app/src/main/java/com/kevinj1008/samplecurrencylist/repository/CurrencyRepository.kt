@@ -1,9 +1,11 @@
 package com.kevinj1008.samplecurrencylist.repository
 
 import androidx.lifecycle.LiveData
+import com.kevinj1008.localclient.helper.SortOrder
 import com.kevinj1008.localclient.model.CurrencyInfo
 
 interface CurrencyRepository {
-    fun observeCurrencyList(): LiveData<List<CurrencyInfo>>
-//    suspend fun insert(list: List<CurrencyInfo>)
+    suspend fun observeCurrencyList(sortOrder: SortOrder): LiveData<List<CurrencyInfo>>
+//    fun observeCurrencyListAsc(): LiveData<List<CurrencyInfo>>
+//    fun observeCurrencyListDesc(): LiveData<List<CurrencyInfo>>
 }

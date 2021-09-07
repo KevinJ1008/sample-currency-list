@@ -1,5 +1,6 @@
 package com.kevinj1008.samplecurrencylist.di
 
+import androidx.lifecycle.LiveData
 import com.kevinj1008.localclient.DatabaseProvider
 import com.kevinj1008.localclient.datasource.CurrencyLocalDataSource
 import com.kevinj1008.localclient.datasource.LocalDataSource
@@ -17,7 +18,7 @@ val sourceModule = module {
 }
 
 val dataSourceModule = module {
-    factory<LocalDataSource<List<CurrencyInfo>>> { CurrencyLocalDataSource(get<AppDataBase>().currencyDao()) }
+    factory<LocalDataSource<LiveData<List<CurrencyInfo>>>> { CurrencyLocalDataSource(get<AppDataBase>().currencyDao()) }
 }
 
 val repositoryModule = module {

@@ -30,6 +30,7 @@ class CurrencyInfoEpoxyController : EpoxyController() {
 
     fun setCurrencyList(list: List<CurrencyInfo>?) {
         list?.apply {
+            currencyList.clear()
             currencyList.addAll(this)
             requestModelBuild()
         }
