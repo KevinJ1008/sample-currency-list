@@ -40,7 +40,7 @@ class DemoActivity : BaseViewBindingActivity<ActivityMainBinding>(), CustomFragm
         super.onCreate(savedInstanceState)
         sortOrder = savedInstanceState?.getSerializable(SORT_ORDER) as? SortOrder ?: SortOrder.ORIGIN
         if (supportFragmentManager.backStackEntryCount > 0) {
-            viewModel.sortByOrder(sortOrder)
+            viewModel.load(sortOrder)
         }
         initViews()
     }
@@ -55,6 +55,7 @@ class DemoActivity : BaseViewBindingActivity<ActivityMainBinding>(), CustomFragm
             super.onBackPressed()
         } else {
             supportFragmentManager.popBackStack()
+            sortOrder = SortOrder.ORIGIN
         }
     }
 
@@ -71,8 +72,6 @@ class DemoActivity : BaseViewBindingActivity<ActivityMainBinding>(), CustomFragm
                     binding?.btnSort?.text = getString(R.string.sorting_btn_origin)
                 }
             }
-        } else {
-            sortOrder = SortOrder.ORIGIN
         }
         binding?.btnSort?.isVisible = isVisible
     }
@@ -81,11 +80,16 @@ class DemoActivity : BaseViewBindingActivity<ActivityMainBinding>(), CustomFragm
         binding?.btnSort?.isClickable = !isLoading
     }
 
+    override fun onRetryLoadData() {
+        viewModel.load(sortOrder)
+        onShowSortingButton(isVisible = true)
+    }
+
     private fun initViews() {
         binding?.btnLoad?.setOnClickListener {
             val fragment = supportFragmentManager.findFragmentByTag(FRAGMENT_TAG) ?: CurrencyListFragment()
             if (fragment.isAdded) return@setOnClickListener
-            viewModel.load()
+            viewModel.load(sortOrder)
             supportFragmentManager.commit {
                 addToBackStack(FRAGMENT_TAG)
                 replace(R.id.container_fragment, fragment, FRAGMENT_TAG)
@@ -108,7 +112,7 @@ class DemoActivity : BaseViewBindingActivity<ActivityMainBinding>(), CustomFragm
                     SortOrder.ORIGIN
                 }
             }
-            viewModel.sortByOrder(sortOrder)
+            viewModel.load(sortOrder)
         }
         binding?.logo?.setOnClickListener {
             onBackPressed()

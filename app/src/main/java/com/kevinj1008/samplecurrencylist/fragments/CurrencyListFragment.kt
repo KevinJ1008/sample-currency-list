@@ -12,6 +12,7 @@ import com.kevinj1008.samplecurrencylist.epoxy.CurrencyInfoEpoxyController
 import com.kevinj1008.samplecurrencylist.interfaces.CustomFragmentManager
 import com.kevinj1008.samplecurrencylist.viewmodel.CurrencyViewModel
 import com.kevinj1008.widget.CustomItemDecoration
+import com.kevinj1008.widget.EmptyView
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 
 class CurrencyListFragment : BaseFragment<FragmentListResultBinding>() {
@@ -20,6 +21,7 @@ class CurrencyListFragment : BaseFragment<FragmentListResultBinding>() {
     private val epoxyController = CurrencyInfoEpoxyController()
     private var dividerDecoration: CustomItemDecoration? = null
     private var manager: CustomFragmentManager? = null
+    private var layoutEmpty: EmptyView? = null
 
     override val bindingInflater: (inflater: LayoutInflater,
                                    container: ViewGroup?,
@@ -66,6 +68,13 @@ class CurrencyListFragment : BaseFragment<FragmentListResultBinding>() {
                 manager?.onDataLoading(this)
             }
         })
+        viewModel.error.observe(viewLifecycleOwner, {
+            it.getContentIfNotHandled()?.apply {
+                viewModel.setLoading(isLoading = false)
+                manager?.onShowSortingButton(isVisible = false)
+                showErrorView()
+            }
+        })
         //ClickListener which hooked from item view in Recyclerview to this parent, use liveData to
         // achieve could prevent write new wrapper class
         epoxyController.clickEvent.observe(viewLifecycleOwner, {
@@ -78,5 +87,18 @@ class CurrencyListFragment : BaseFragment<FragmentListResultBinding>() {
                 }
             }
         })
+    }
+
+    private fun showErrorView() {
+        if (layoutEmpty == null) {
+            layoutEmpty = binding?.stubEmpty?.inflate() as? EmptyView?
+            layoutEmpty?.apply {
+                setOnRetryClickListener {
+                    layoutEmpty?.isVisible = false
+                    manager?.onRetryLoadData()
+                }
+            }
+        }
+        layoutEmpty?.isVisible = true
     }
 }

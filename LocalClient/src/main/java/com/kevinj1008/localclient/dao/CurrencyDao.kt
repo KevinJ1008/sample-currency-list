@@ -3,13 +3,13 @@ package com.kevinj1008.localclient.dao
 import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Query
-import com.kevinj1008.localclient.helper.SortOrder
 import com.kevinj1008.localclient.model.CurrencyInfo
 
 //TODO: Not handle massive data issue if we have huge list in future, just make sample easy and
 // complete basic feature
 /**
- * Room's mechanism will help us to switch to IO/Main thread operation while query if we return liveData
+ * Room's mechanism will help us to switch to IO/Main thread operation while query if we return
+ * liveData, so no need to make suspend fun for return type {@link androidx.lifecycle.LiveData}
  */
 @Dao
 interface CurrencyDao {
