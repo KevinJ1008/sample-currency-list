@@ -54,8 +54,6 @@ dependencies {
     //----------------------------------------------------------------------------------------------
     //3rd Library
     //----------------------------------------------------------------------------------------------
-    api 'com.squareup.retrofit2:retrofit:2.9.0'
-    api "com.squareup.retrofit2:converter-gson:2.6.2"
     api "com.google.code.gson:gson:2.8.6"
 
     //----------------------------------------------------------------------------------------------
@@ -73,8 +71,6 @@ dependencies {
     api "androidx.room:room-runtime:$roomVersion"
     api "androidx.room:room-ktx:$roomVersion"
     kapt "androidx.room:room-compiler:$roomVersion"
-    api "androidx.navigation:navigation-fragment-ktx:$navVersion"
-    api "androidx.navigation:navigation-ui-ktx:$navVersion"
 
     //----------------------------------------------------------------------------------------------
     // Koin
