@@ -9,11 +9,13 @@ import com.kevinj1008.localclient.model.CurrencyInfo
 import com.kevinj1008.samplecurrencylist.repository.CurrencyRepository
 import kotlinx.coroutines.Dispatchers
 
-class CurrencyViewModel(
+//open for mock
+open class CurrencyViewModel(
     private val repository: CurrencyRepository
 ) : BaseViewModel() {
 
-    private val _sort = MutableLiveData<SortOrder>()
+    //protected -> for unit test usage
+    protected val _sort = MutableLiveData<SortOrder>()
     val currencyList: LiveData<Event<List<CurrencyInfo>>> = _sort.switchMap {
         setLoading(isLoading = true)
         liveData(context = exceptionHandler + Dispatchers.IO) {
